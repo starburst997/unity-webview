@@ -8,6 +8,7 @@ using System;
 using UnityEditor.Android;
 using UnityEditor.Callbacks;
 using UnityEditor;
+using UnityEditor.iOS.Xcode;
 using UnityEngine;
 
 #if UNITY_2018_1_OR_NEWER
@@ -94,13 +95,7 @@ public class UnityWebViewPostprocessBuild
 #endif
         if (buildTarget == BuildTarget.iOS) {
             string projPath = path + "/Unity-iPhone.xcodeproj/project.pbxproj";
-            var type = Type.GetType("UnityEditor.iOS.Xcode.PBXProject, UnityEditor.iOS.Extensions.Xcode");
-            if (type == null)
-            {
-                Debug.LogError("unitywebview: failed to get PBXProject. please install iOS build support.");
-                return;
-            }
-            dynamic proj = type.GetConstructor(Type.EmptyTypes).Invoke(null);
+            PBXProject proj = new PBXProject();
             proj.ReadFromString(File.ReadAllText(projPath));
 #if UNITY_2019_3_OR_NEWER
             proj.AddFrameworkToProject(proj.GetUnityFrameworkTargetGuid(), "WebKit.framework", false);
