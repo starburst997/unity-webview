@@ -164,7 +164,7 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
             configuration.defaultWebpagePreferences.preferredContentMode = contentMode;
         }
         
-        configuration.suppressesIncrementalRendering = true;
+        configuration.suppressesIncrementalRendering = false; // TODO: Add params
         
         webView = [[WKWebView alloc] initWithFrame:view.frame configuration:configuration];
         webView.UIDelegate = self;
