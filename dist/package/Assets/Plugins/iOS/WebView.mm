@@ -163,6 +163,9 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
         if (@available(iOS 13.0, *)) {
             configuration.defaultWebpagePreferences.preferredContentMode = contentMode;
         }
+        
+        configuration.suppressesIncrementalRendering = true;
+        
         webView = [[WKWebView alloc] initWithFrame:view.frame configuration:configuration];
         webView.UIDelegate = self;
         webView.navigationDelegate = self;
