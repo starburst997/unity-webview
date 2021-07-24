@@ -159,8 +159,8 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
         //webView.navigationDelegate = self;
         
         // TODO: Add params
-        webView.allowsLinkPreview = NO;
-        webView.allowsBackForwardNavigationGestures = YES;
+        ((WKWebView *)webView).allowsLinkPreview = NO;
+        ((WKWebView *)webView).allowsBackForwardNavigationGestures = YES;
         
         if (ua != NULL && strcmp(ua, "") != 0) {
             ((WKWebView *)webView).customUserAgent = [[NSString alloc] initWithUTF8String:ua];
