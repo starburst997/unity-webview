@@ -160,7 +160,7 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
         
         // TODO: Add params
         ((WKWebView *)webView).allowsLinkPreview = NO;
-        ((WKWebView *)webView).allowsBackForwardNavigationGestures = YES;
+        ((WKWebView *)webView).allowsBackForwardNavigationGestures = NO; // Show a blank / white page, very ugly
         
         if (ua != NULL && strcmp(ua, "") != 0) {
             ((WKWebView *)webView).customUserAgent = [[NSString alloc] initWithUTF8String:ua];
