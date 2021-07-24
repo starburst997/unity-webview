@@ -128,25 +128,7 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
         WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
         WKUserContentController *controller = [[WKUserContentController alloc] init];
         [controller addScriptMessageHandler:self name:@"unityControl"];
-        if (!zoom) {
-            WKUserScript *script
-                = [[WKUserScript alloc]
-                      initWithSource:@"\
-(function() { \
-    var meta = document.querySelector('meta[name=viewport]'); \
-    if (meta == null) { \
-        meta = document.createElement('meta'); \
-        meta.name = 'viewport'; \
-    } \
-    meta.content += ((meta.content.length > 0) ? ',' : '') + 'user-scalable=no'; \
-    var head = document.getElementsByTagName('head')[0]; \
-    head.appendChild(meta); \
-})(); \
-"
-                       injectionTime:WKUserScriptInjectionTimeAtDocumentEnd
-                    forMainFrameOnly:YES];
-            [controller addUserScript:script];
-        }
+        
         configuration.userContentController = controller;
         configuration.allowsInlineMediaPlayback = true;
         if (@available(iOS 10.0, *)) {
@@ -164,11 +146,22 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
             configuration.defaultWebpagePreferences.preferredContentMode = contentMode;
         }
         
-        configuration.suppressesIncrementalRendering = false; // TODO: Add params
+        // TODO: Add params
+        if (@available(iOS 14.0, *)) {
+            configuration.limitsNavigationsToAppBoundDomains = YES;
+        }
+        
+        configuration.suppressesIncrementalRendering = false;
         
         webView = [[WKWebView alloc] initWithFrame:view.frame configuration:configuration];
+        
         webView.UIDelegate = self;
-        webView.navigationDelegate = self;
+        //webView.navigationDelegate = self;
+        
+        // TODO: Add params
+        webView.allowsLinkPreview = NO;
+        webView.allowsBackForwardNavigationGestures = YES;
+        
         if (ua != NULL && strcmp(ua, "") != 0) {
             ((WKWebView *)webView).customUserAgent = [[NSString alloc] initWithUTF8String:ua];
         }
@@ -190,7 +183,7 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     webView.hidden = YES;
 
-    [webView addObserver:self forKeyPath: @"loading" options: NSKeyValueObservingOptionNew context:nil];
+    //[webView addObserver:self forKeyPath: @"loading" options: NSKeyValueObservingOptionNew context:nil];
 
     [view addSubview:webView];
 
@@ -208,7 +201,7 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
         }
         [webView0 stopLoading];
         [webView0 removeFromSuperview];
-        [webView0 removeObserver:self forKeyPath:@"loading"];
+        //[webView0 removeObserver:self forKeyPath:@"loading"];
     }
     basicAuthPassword = nil;
     basicAuthUserName = nil;
@@ -388,7 +381,7 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
         UnitySendMessage([gameObjectName UTF8String], "CallOnHooked", [url UTF8String]);
         decisionHandler(WKNavigationActionPolicyCancel);
         return;
-    } else if (![url hasPrefix:@"about:blank"]  // for loadHTML(), cf. #365
+    /*} else if (![url hasPrefix:@"about:blank"]  // for loadHTML(), cf. #365
                && ![url hasPrefix:@"file:"]
                && ![url hasPrefix:@"http:"]
                && ![url hasPrefix:@"https:"]) {
@@ -396,14 +389,14 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
             [[UIApplication sharedApplication] openURL:nsurl];
         }
         decisionHandler(WKNavigationActionPolicyCancel);
-        return;
-    } else if (navigationAction.navigationType == WKNavigationTypeLinkActivated
+        return;*/
+    /*} else if (navigationAction.navigationType == WKNavigationTypeLinkActivated
                && (!navigationAction.targetFrame || !navigationAction.targetFrame.isMainFrame)) {
         // cf. for target="_blank", cf. http://qiita.com/ShingoFukuyama/items/b3a1441025a36ab7659c
         [webView load:navigationAction.request];
         decisionHandler(WKNavigationActionPolicyCancel);
-        return;
-    } else {
+        return;*/
+    /*} else {
         if (navigationAction.targetFrame != nil && navigationAction.targetFrame.isMainFrame) {
             // If the custom header is not attached, give it and make a request again.
             if (![self isSetupedCustomHeader:[navigationAction request]]) {
@@ -412,9 +405,9 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
                 decisionHandler(WKNavigationActionPolicyCancel);
                 return;
             }
-        }
+        }*/
     }
-    UnitySendMessage([gameObjectName UTF8String], "CallOnStarted", [url UTF8String]);
+    //UnitySendMessage([gameObjectName UTF8String], "CallOnStarted", [url UTF8String]);
     decisionHandler(WKNavigationActionPolicyAllow);
 }
 
