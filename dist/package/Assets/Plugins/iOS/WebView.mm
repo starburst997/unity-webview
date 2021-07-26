@@ -179,6 +179,11 @@ static NSMutableArray *_instances = [[NSMutableArray alloc] init];
     if (transparent) {
         webView.opaque = NO;
         webView.backgroundColor = [UIColor clearColor];
+    } else {
+        webView.backgroundColor = [UIColor colorWithRed:0.1647059
+                                                  green:0.1764706
+                                                   blue:0.2509804
+                                                  alpha:1.0];
     }
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     webView.hidden = YES;
